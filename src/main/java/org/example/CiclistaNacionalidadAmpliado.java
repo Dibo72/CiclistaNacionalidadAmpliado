@@ -50,7 +50,7 @@ public class CiclistaNacionalidadAmpliado {
             }
 
         }catch(Exception e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -186,32 +186,18 @@ public class CiclistaNacionalidadAmpliado {
 
     public static boolean existe(Connection conn, int id, String donde) throws SQLException {
         PreparedStatement ps;
-        String existe;
+        String existe = "";
         ResultSet rs;
-        switch(donde){
+        existe = switch (donde) {
             //si le pasamos la palabra "equipo", comparamos el id con id_equipo
-            case "equipo":
-                existe = "SELECT * FROM ciclista WHERE id_equipo = ?";
-                ps = conn.prepareStatement(existe);
-                ps.setInt(1, id);
-                rs = ps.executeQuery();
-                if(rs.next()) {
-                    return true;
-                }else{
-                    return false;
-                }
-                //si le pasamos la palabra "ciclista", comparamos el id con id_ciclista
-            case "ciclista":
-                existe = "SELECT * FROM ciclista WHERE id_ciclista = ?";
-                ps = conn.prepareStatement(existe);
-                ps.setInt(1, id);
-                rs = ps.executeQuery();
-                if(rs.next()) {
-                    return true;
-                }else{
-                    return false;
-                }
-        }
-        return false;
+            case "equipo" -> "SELECT * FROM ciclista WHERE id_equipo = ?";
+            //si le pasamos la palabra "ciclista", comparamos el id con id_ciclista
+            case "ciclista" -> "SELECT * FROM ciclista WHERE id_ciclista = ?";
+            default -> existe;
+        };
+        ps = conn.prepareStatement(existe);
+        ps.setInt(1, id);
+        rs = ps.executeQuery();
+        return rs.next();
     }
 }
